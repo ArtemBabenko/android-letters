@@ -3,6 +3,7 @@ package me.pinxter.letters;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -29,6 +30,19 @@ public class Letters {
     private OnSelect select;
     private List<Field> fields = new ArrayList<>();
     private LinkedHashMap<Integer, String> letters = new LinkedHashMap<>();
+
+    private String activeLetter;
+    private int activeIndex;
+
+    private Handler handler = new Handler();
+    private Runnable runnableSearch = new Runnable() {
+        @Override
+        public void run() {
+            if (select != null) {
+                select.onSelect(activeIndex, activeLetter);
+            }
+        }
+    };
 
     public interface OnSelect {
         void onSelect(int index, String letter);
@@ -172,7 +186,14 @@ public class Letters {
                             if (!values.get("index").equals(index)) {
                                 values.put("index", index);
                                 if (select != null && lettersIndex.size() != index) {
-                                    select.onSelect(lettersIndex.get(index), letters.get(lettersIndex.get(index)));
+                                    if (!letters.get(lettersIndex.get(index)).equals(activeLetter)) {
+
+                                        activeIndex = lettersIndex.get(index);
+                                        activeLetter = letters.get(lettersIndex.get(index));
+
+                                        handler.removeCallbacks(runnableSearch);
+                                        handler.postDelayed(runnableSearch, 50);
+                                    }
                                 }
                             }
                         }
