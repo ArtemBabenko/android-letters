@@ -17,7 +17,7 @@ and:
 
 ```gradle
 dependencies {
-    compile 'com.github.keygenqt:android-letters:1.0.1'
+    compile 'com.github.keygenqt:android-letters:1.0.2'
 }
 ```
 
